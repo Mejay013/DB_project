@@ -1,0 +1,9 @@
+{% extends 'base.html'%}
+{%block content %}
+{% if user.is_authenticated %}
+Привет {{user.username}}
+{% else %}
+<h1>Вы еще не явлеетесь нашим абонентом!</h1>
+<a href="{% url 'reg' %}"><button class="btn btn-primary">Стать абонентом!</button></a>
+{% endif %}
+{% endblock %}
