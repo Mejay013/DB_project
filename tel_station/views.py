@@ -51,18 +51,24 @@ def registration(request):
             block_list = Block.objects.filter(atc_id = atc_list[rand_atc].id ) #получаем все блоки случайно выбранной АТС
             if len(block_list)>1:
                 rand_block = random.randint(0,len(block_list) - 1) # выбираем случайно один блок
-                
+                select_block = block_list[rand_block]
+            elif len(block_list) == 0:
+                select_block = Block(atc_id= atc_list[rand_atc].id) # создаем новый блок со случайно выбранной АТС
+                select_block.save()
             else:
                 rand_block = 0
-            select_block = block_list[rand_block]
+                select_block = block_list[rand_block]
             
             ban_block_list = UniqueBlock.objects.all()
-            if select_block in ban_block_list: 
-                pass # ВОТ ТУТ ДОПИСАТЬ
-
+            if select_block in ban_block_list or len(TelNumber.objects.filter(block_id = select_block.id)) > 1: # если выбранный блок в списке уникальных или больше 2х 
+                                                                                                                # номеров на один блок
+                select_block = Block(atc_id= atc_list[rand_atc].id) # создаем новый блок со случайно выбранной АТС
+                select_block.save()
          
         tel = TelNumber(sub_id = user2.id, block_id = select_block.id, debt = 0, date = datetime.datetime.now() )
         tel.save()
+        atc_list[rand_atc].num_val += 1
+        atc_list[rand_atc].save()
     
         
         return render(request,'index.html',)
