@@ -29,6 +29,38 @@
     </tbody>
 </table>
 
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Добавить новый номер
+  </button>
+  
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Добавление номера</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+        <form action=" {% url 'add_number' %} " method="POST" class="form-signin">
+            {% csrf_token %}
+            <p>Выберите район,где будет использован номер:</p>
+            <div class="form-group">
+                <label for="sel1">Около какого метро вы проживаете?:</label>
+                <select class="form-control" name="district" id="sel1" >
+                  {% for district in district_list %}
+                  <option value ='{{district.id}}' >{{district.name}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <button type="submit" class="btn btn-lg btn-primary ">Добавить номер</button>
+        </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
 {% else %}
 <h1>Вы еще не явлеетесь нашим абонентом!</h1>
 <a href="{% url 'reg' %}"><button class="btn btn-primary">Стать абонентом!</button></a>
