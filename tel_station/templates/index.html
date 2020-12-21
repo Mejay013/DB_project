@@ -1,7 +1,34 @@
 {% extends 'base.html'%}
 {%block content %}
 {% if user.is_authenticated %}
-Привет {{user.username}}
+<p>Привет {{subscriber.second_name}}</p>
+<p>Наличие блокиратора: {% if subscriber.check_block == True %}
+    Да
+{% else %}
+    Нет
+    {% endif %}
+<p>Ваш район: {{ district.name }}</p>
+<table class="table">
+    <thead>
+        <tr>
+            <td>Номер телефона</td>
+            <td>ID блокиратора</td>
+            <td>Задолженность</td>
+            <td>Дата создания</td>
+          </tr>
+    </thead>
+    <tbody>
+            {% for number in tel_number_list %}
+            <tr>
+              <td>{{number.id}}</td>
+              <td>{{number.block_id}}</td>
+              <td>{{number.debt}}</td>
+              <td>{{number.date}}</td>
+              </tr>
+              {% endfor %}
+    </tbody>
+</table>
+
 {% else %}
 <h1>Вы еще не явлеетесь нашим абонентом!</h1>
 <a href="{% url 'reg' %}"><button class="btn btn-primary">Стать абонентом!</button></a>

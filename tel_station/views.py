@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.http import HttpResponse , Http404 , HttpResponseRedirect
 from .models import District,Subscriber,SubInfo,TelNumber,Atc,UniqueBlock,Block
 from django.contrib.auth.models import User
@@ -8,9 +8,41 @@ import random
 
 
 def index(request):
+    if request.user.is_authenticated:
+        user = User.objects.get(id = request.user.id)
+        subscriber = Subscriber.objects.get(id = user.id)
+        sub_info = SubInfo.objects.get( sub_id = user.id )
+        tel_number_list = TelNumber.objects.filter( sub_id = user.id)
+        district = District.objects.get(id = sub_info.district_id)
+
+        context = {
+            'user' : user,
+            'subscriber' : subscriber,
+            'sub_info' : sub_info,
+            'tel_number_list' : tel_number_list,
+            'district' : district
+        }
+        return render(request,'index.html', context = context)
     return render(request,'index.html')
 
+def logout(request):
+    auth.logout(request)
+    return redirect('index')
+    
+def login(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = auth.authenticate(username = username, password = password)
+        if user is not None:
+            auth.login(request, user)
+            return redirect('index')
+        else:
+            error_msg = 'Неправильный логин или пароль'
+            return render(request,'login.html',error_msg = error_msg)
 
+    else:
+        return render(request,'login.html')
 
 def registration(request):
     if request.method == 'POST':
@@ -71,7 +103,8 @@ def registration(request):
         atc_list[rand_atc].save()
     
         
-        return render(request,'index.html',)
+        return redirect('index')
+
     else:
         district_list = District.objects.all()
         context = {
